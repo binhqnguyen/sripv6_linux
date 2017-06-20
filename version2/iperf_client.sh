@@ -1,4 +1,4 @@
 #!/bin/bash
 source net_info.sh
 
-iperf -u -V -c $n5_e -b 1000m
+iperf -V -M 1350 -c $n5_e
