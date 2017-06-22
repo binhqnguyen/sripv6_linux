@@ -1,0 +1,27 @@
+Scripts to run Free Range Routing's OSPF on profile sripv6-v3 in PhantomNet (https://www.phantomnet.org/show-profile.php?uuid=dfcfe493-56a9-11e7-91c5-90e2ba22fee4)
+------------------------------------------------------------------------------------
+
+
+How to run? Everything is running on Node1.
+1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh
+2. Add global IPv6 addresses to interfaces: ./add_global_ipv6.sh
+3. Create and install configuration files for FRR's Zebra and OSPF6. The configuration is copied to /usr/local/etc/ on each node after running the command:
+	./create_all_zebra_conf.sh
+	./create_all_ospf_conf.sh
+4. Run FRR on node 2, 3, 4:
+	./start_all_frr.sh
+5. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
+	ip -6 route
+6. Install default routes on the end hosts: node1 and node 5
+	./install_default_route_on_hosts.sh
+6. Ping test from node 1 to 5:
+	ping6 <node 5's nete IPv6 address>
+
+
+
+Other scripts:
+--------------
+1. kill_frr.sh: kill zebra and ospf deamons on a OSPF router.
+2. start_frr.sh: start zebra and ospf deamons on a OSPF router.
+3. zebra/ospf.log: log files of zebra and ospf.
+4. other scripts are irrelevant, park here now for later use.
