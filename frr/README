@@ -2,7 +2,8 @@ Scripts to run Free Range Routing's OSPF on profile sripv6-v3 in PhantomNet (htt
 ------------------------------------------------------------------------------------
 
 
-How to run? Everything is running on Node1.
+A. How to set up basic IPv6 with OSPF? Everything is running on Node1.
+---------------------------------------------------------------------
 1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh
 2. Add global IPv6 addresses to interfaces: ./add_global_ipv6.sh
 3. Create and install configuration files for FRR's Zebra and OSPF6. The configuration is copied to /usr/local/etc/ on each node after running the command:
@@ -17,6 +18,15 @@ How to run? Everything is running on Node1.
 6. Ping test from node 1 to 5:
 	ping6 <node 5's nete IPv6 address>
 
+B. Combining OSPF with SR. Again, everything is run on node1:
+------------------------------------------------------------
+1. After part A, enable SR flags on the routers:
+	./enable_sr_flags.sh
+2. Install SR rules, for high bandwidth path (1->2->4->3->5):
+	./ul_adj.sh
+	./dl_adj.sh
+3. Install SR rules, for low delay, low bandwidth path (1->2->3->5) the path is enable by OSPF as default:
+	./del_sr.sh
 
 
 Other scripts:

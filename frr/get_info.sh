@@ -9,7 +9,7 @@ if [ "$hn" == "node1" ]; then
 	echo "#Node $hn..."
 	n1_a_dev=$($INF | grep neta | awk '{print $3}')
 	n1_a_mac=$(ifconfig | grep $n1_a_dev | awk '{print $5}')
-	n1_a=$(ifconfig | grep -A3 $n1_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::204/ )
+	n1_a=$(ifconfig | grep -A3 $n1_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
 	echo "n1_lb=\"$LB_IP\""
 	echo "n1_a=\"$n1_a\""
 	echo "n1_a_mac=\"$n1_a_mac\""
@@ -23,15 +23,15 @@ if [ "$hn" == "node2" ]; then
 	echo "#Node $hn..."
 	n2_a_dev=$($INF | grep neta | awk '{print $3}')
 	n2_a_mac=$(ifconfig | grep $n2_a_dev | awk '{print $5}')
-	n2_a=$(ifconfig | grep -A3 $n2_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::204/ )
+	n2_a=$(ifconfig | grep -A3 $n2_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
 
 	n2_b_dev=$($INF | grep netb | awk '{print $3}')
 	n2_b_mac=$(ifconfig | grep $n2_b_dev | awk '{print $5}')
-	n2_b=$(ifconfig | grep -A3 $n2_b_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::205/ )
+	n2_b=$(ifconfig | grep -A3 $n2_b_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::205:/ )
 
 	n2_c_dev=$($INF | grep netc | awk '{print $3}')
 	n2_c_mac=$(ifconfig | grep $n2_c_dev | awk '{print $5}')
-	n2_c=$(ifconfig | grep -A3 $n2_c_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::206/ )
+	n2_c=$(ifconfig | grep -A3 $n2_c_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::206:/ )
 
 	echo "n2_lb=\"$LB_IP\""
 	echo "n2_a=\"$n2_a\""
@@ -52,15 +52,15 @@ if [ "$hn" == "node3" ]; then
 	echo "#Node $hn..."
 	n3_b_dev=$($INF | grep netb | awk '{print $3}')
 	n3_b_mac=$(ifconfig | grep $n3_b_dev | awk '{print $5}')
-	n3_b=$(ifconfig | grep -A3 $n3_b_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::205/ )
+	n3_b=$(ifconfig | grep -A3 $n3_b_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::205:/ )
 
 	n3_d_dev=$($INF | grep netd | awk '{print $3}')
 	n3_d_mac=$(ifconfig | grep $n3_d_dev | awk '{print $5}')
-	n3_d=$(ifconfig | grep -A3 $n3_d_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::207/ )
+	n3_d=$(ifconfig | grep -A3 $n3_d_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::207:/ )
 
 	n3_e_dev=$($INF | grep nete | awk '{print $3}')
 	n3_e_mac=$(ifconfig | grep $n3_e_dev | awk '{print $5}')
-	n3_e=$(ifconfig | grep -A3 $n3_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::208/ )
+	n3_e=$(ifconfig | grep -A3 $n3_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 
 	echo "n3_lb=\"$LB_IP\""
 	echo "n3_b=\"$n3_b\""
@@ -82,11 +82,11 @@ if [ "$hn" == "node4" ]; then
 	n4=$($INF)
 	n4_c_dev=$($INF | grep netc | awk '{print $3}')
 	n4_c_mac=$(ifconfig | grep $n4_c_dev | awk '{print $5}')
-	n4_c=$(ifconfig | grep -A3 $n4_c_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::206/ )
+	n4_c=$(ifconfig | grep -A3 $n4_c_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::206:/ )
 
 	n4_d_dev=$($INF | grep netd | awk '{print $3}')
 	n4_d_mac=$(ifconfig | grep $n4_d_dev | awk '{print $5}')
-	n4_d=$(ifconfig | grep -A3 $n4_d_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::207/ )
+	n4_d=$(ifconfig | grep -A3 $n4_d_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*/2001::207:/ )
 
 	echo "n4_lb=\"$LB_IP\""
 	echo "n4_c=\"$n4_c\""
@@ -104,7 +104,7 @@ if [ "$hn" == "node5" ]; then
 	echo "#Node $hn..."
 	n5_e_dev=$($INF | grep nete | awk '{print $3}')
 	n5_e_mac=$(ifconfig | grep $n5_e_dev | awk '{print $5}')
-	n5_e=$(ifconfig | grep -A3 $n5_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::204/2001::208/ )
+	n5_e=$(ifconfig | grep -A3 $n5_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 
 	echo "n5_lb=\"$LB_IP\""
 	echo "n5_e=\"$n5_e\""
