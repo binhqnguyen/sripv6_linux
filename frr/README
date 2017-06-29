@@ -22,12 +22,12 @@ B. Combining OSPF with SR. Again, everything is run on node1:
 ------------------------------------------------------------
 1. After part A, enable SR flags on the routers:
 	./enable_sr_flags.sh
-2. Install SR rules, for high bandwidth path (1->2->4->3->5):
+2. Install SR rules, for high bandwidth path (1->2->4->3->5): Using adjacency segments (interface addresses)
 	./ul_adj.sh
 	./dl_adj.sh
-3. Install SR rules, for low delay, low bandwidth path (1->2->3->5) the path is enable by OSPF as default:
-	./del_sr.sh
-
+3. Install SR rules, for low delay, low bandwidth path (1->2->3->5) the path is enable by OSPF as default: Using node segments (loopback's addresses)
+	./ul_node_seg.sh
+	./dl_node_seg.sh
 
 Other scripts:
 --------------

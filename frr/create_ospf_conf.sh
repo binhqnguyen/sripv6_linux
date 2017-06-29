@@ -24,6 +24,8 @@ if [ "$hn" == "node2" ]; then
 	echo "	 interface $n2_b_dev area 0.0.0.0" >> $OSPF
 	echo "   area 0.0.0.0 range $n2_c/80" >> $OSPF
 	echo "	 interface $n2_c_dev area 0.0.0.0" >> $OSPF
+	echo "   area 0.0.0.0 range $n2_lb/80" >> $OSPF
+	echo "	 interface lo area 0.0.0.0" >> $OSPF
 fi
 
 
@@ -43,6 +45,8 @@ if [ "$hn" == "node3" ]; then
 	echo "	 interface $n3_d_dev area 0.0.0.0" >> $OSPF
 	echo "   area 0.0.0.0 range $n3_e/80" >> $OSPF
 	echo "	 interface $n3_e_dev area 0.0.0.0" >> $OSPF
+	echo "   area 0.0.0.0 range $n3_lb/80" >> $OSPF
+	echo "	 interface lo area 0.0.0.0" >> $OSPF
 fi
 
 
@@ -59,6 +63,8 @@ if [ "$hn" == "node4" ]; then
 	echo "	 interface $n4_c_dev area 0.0.0.0" >> $OSPF
 	echo "   area 0.0.0.0 range $n4_d/80" >> $OSPF
 	echo "	 interface $n4_d_dev area 0.0.0.0" >> $OSPF
+	echo "   area 0.0.0.0 range $n4_lb/80" >> $OSPF
+	echo "	 interface lo area 0.0.0.0" >> $OSPF
 fi
 
 echo "line vty" >> $OSPF

@@ -1,5 +1,5 @@
 #!/bin/bash
-LB_IP="fc01::1"
+LB_IP=197
 INF="/proj/PhantomNet/binh/simeca_scripts/get_interface_map.pl"
 
 
@@ -10,7 +10,8 @@ if [ "$hn" == "node1" ]; then
 	n1_a_dev=$($INF | grep neta | awk '{print $3}')
 	n1_a_mac=$(ifconfig | grep $n1_a_dev | awk '{print $5}')
 	n1_a=$(ifconfig | grep -A3 $n1_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
-	echo "n1_lb=\"$LB_IP\""
+	let lb=$LB_IP+1
+	echo "n1_lb=\"$lb::1\""
 	echo "n1_a=\"$n1_a\""
 	echo "n1_a_mac=\"$n1_a_mac\""
 	echo "n1_a_dev=\"$n1_a_dev\""
@@ -33,7 +34,8 @@ if [ "$hn" == "node2" ]; then
 	n2_c_mac=$(ifconfig | grep $n2_c_dev | awk '{print $5}')
 	n2_c=$(ifconfig | grep -A3 $n2_c_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::206:/ )
 
-	echo "n2_lb=\"$LB_IP\""
+	let lb=$LB_IP+2
+	echo "n2_lb=\"$lb::1\""
 	echo "n2_a=\"$n2_a\""
 	echo "n2_a_mac=\"$n2_a_mac\""
 	echo "n2_a_dev=\"$n2_a_dev\""
@@ -62,7 +64,8 @@ if [ "$hn" == "node3" ]; then
 	n3_e_mac=$(ifconfig | grep $n3_e_dev | awk '{print $5}')
 	n3_e=$(ifconfig | grep -A3 $n3_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 
-	echo "n3_lb=\"$LB_IP\""
+	let lb=$LB_IP+3
+	echo "n3_lb=\"$lb::1\""
 	echo "n3_b=\"$n3_b\""
 	echo "n3_b_mac=\"$n3_b_mac\""
 	echo "n3_b_dev=\"$n3_b_dev\""
@@ -88,7 +91,8 @@ if [ "$hn" == "node4" ]; then
 	n4_d_mac=$(ifconfig | grep $n4_d_dev | awk '{print $5}')
 	n4_d=$(ifconfig | grep -A3 $n4_d_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*/2001::207:/ )
 
-	echo "n4_lb=\"$LB_IP\""
+	let lb=$LB_IP+4
+	echo "n4_lb=\"$lb::1\""
 	echo "n4_c=\"$n4_c\""
 	echo "n4_c_mac=\"$n4_c_mac\""
 	echo "n4_c_dev=\"$n4_c_dev\""
@@ -106,7 +110,8 @@ if [ "$hn" == "node5" ]; then
 	n5_e_mac=$(ifconfig | grep $n5_e_dev | awk '{print $5}')
 	n5_e=$(ifconfig | grep -A3 $n5_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 
-	echo "n5_lb=\"$LB_IP\""
+	let lb=$LB_IP+5
+	echo "n5_lb=\"$lb::1\""
 	echo "n5_e=\"$n5_e\""
 	echo "n5_e_mac=\"$n5_e_mac\""
 	echo "n5_e_dev=\"$n5_e_dev\""
