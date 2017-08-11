@@ -21,6 +21,8 @@ B. Run OVS with SR:
 	1. Install ovs's kernel module: cd /opt/openvswitch; sudo ./re_compile.sh
 	2. Run OVS: cd /opt/openvswitch; sudo ./run_ovs.sh
 	3. Create ports for OVS: cd /opt/openvswitch; sudo ./run_srv6.sh <inport network (facing endhost)> <outport network (facing CR)> <controller's IP (node1's public IP)>
+		eg, node5: sudo ./run_srv6.sh net2 nete 155.98.39.139; 
+		    node1: sudo ./run_srv6.sh net1 neta 127.0.0.1
 	4. Show the ports of OVS by: cd /opt/openvswitch; sudo ./ovs_port_desc.sh
 	5. The OVS will try to connect to the Ryu's SDN controller at node1.
 

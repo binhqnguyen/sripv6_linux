@@ -8,7 +8,7 @@ if [ "$hn" == "node0" ]; then
 	echo "#Node $hn..."
 	n0_1_dev=$($INF | grep net1 | awk '{print $3}')
 	n0_1_mac=$(ifconfig | grep $n0_1_dev | awk '{print $5}')
-	n0_1=$(ifconfig | grep -A3 $n0_1_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::203:/ )
+	n0_1=$(ifconfig | grep -A3 $n0_1_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
 	let lb=$LB_IP+0
 	echo "n0_lb=\"$lb::1\""
 	echo "n0_1=\"$n0_1\""
@@ -27,7 +27,7 @@ if [ "$hn" == "node1" ]; then
 	n1_a=$(ifconfig | grep -A3 $n1_a_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
 	n1_1_dev=$($INF | grep net1 | awk '{print $3}')
 	n1_1_mac=$(ifconfig | grep $n1_1_dev | awk '{print $5}')
-	n1_1=$(ifconfig | grep -A3 $n1_1_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::203:/ )
+	n1_1=$(ifconfig | grep -A3 $n1_1_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
 	let lb=$LB_IP+1
 	echo "n1_lb=\"$lb::1\""
 	echo "n1_a=\"$n1_a\""
@@ -133,7 +133,7 @@ if [ "$hn" == "node5" ]; then
 	n5_e=$(ifconfig | grep -A3 $n5_e_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 	n5_2_dev=$($INF | grep net2 | awk '{print $3}')
 	n5_2_mac=$(ifconfig | grep $n5_2_dev | awk '{print $5}')
-	n5_2=$(ifconfig | grep -A3 $n5_2_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::209:/ )
+	n5_2=$(ifconfig | grep -A3 $n5_2_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 	let lb=$LB_IP+5
 	echo "n5_lb=\"$lb::1\""
 	echo "n5_e=\"$n5_e\""
@@ -152,7 +152,7 @@ if [ "$hn" == "node6" ]; then
 	echo "#Node $hn..."
 	n6_2_dev=$($INF | grep net2 | awk '{print $3}')
 	n6_2_mac=$(ifconfig | grep $n6_2_dev | awk '{print $5}')
-	n6_2=$(ifconfig | grep -A3 $n6_2_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::209:/ )
+	n6_2=$(ifconfig | grep -A3 $n6_2_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
 	let lb=$LB_IP+6
 	echo "n6_lb=\"$lb::1\""
 	echo "n6_2=\"$n6_2\""
