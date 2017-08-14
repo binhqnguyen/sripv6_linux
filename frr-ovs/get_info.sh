@@ -28,6 +28,7 @@ if [ "$hn" == "node1" ]; then
 	n1_1_dev=$($INF | grep net1 | awk '{print $3}')
 	n1_1_mac=$(ifconfig | grep $n1_1_dev | awk '{print $5}')
 	n1_1=$(ifconfig | grep -A3 $n1_1_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::204:/ )
+	n1_pub=$(ifconfig | grep -A3 "eth0" | grep "inet addr" | awk '{print $2}' | awk -F":" '{print $2}')
 	let lb=$LB_IP+1
 	echo "n1_lb=\"$lb::1\""
 	echo "n1_a=\"$n1_a\""
@@ -36,6 +37,7 @@ if [ "$hn" == "node1" ]; then
 	echo "n1_1=\"$n1_1\""
 	echo "n1_1_mac=\"$n1_1_mac\""
 	echo "n1_1_dev=\"$n1_1_dev\""
+	echo "n1_pub=\"$n1_pub\""
 
 fi
 
@@ -134,6 +136,7 @@ if [ "$hn" == "node5" ]; then
 	n5_2_dev=$($INF | grep net2 | awk '{print $3}')
 	n5_2_mac=$(ifconfig | grep $n5_2_dev | awk '{print $5}')
 	n5_2=$(ifconfig | grep -A3 $n5_2_dev | grep inet6 | grep "fe80::" | awk '{print $3}' | awk -F'/' '{print $1}' | sed s/fe80::*:/2001::208:/ )
+	n5_pub=$(ifconfig | grep -A3 "eth0" | grep "inet addr" | awk '{print $2}' | awk -F":" '{print $2}')
 	let lb=$LB_IP+5
 	echo "n5_lb=\"$lb::1\""
 	echo "n5_e=\"$n5_e\""
@@ -142,6 +145,7 @@ if [ "$hn" == "node5" ]; then
 	echo "n5_2=\"$n5_2\""
 	echo "n5_2_mac=\"$n5_2_mac\""
 	echo "n5_2_dev=\"$n5_2_dev\""
+	echo "n5_pub=\"$n5_pub\""
 
 fi
 

@@ -22,13 +22,13 @@ B. Run OVS with SR:
 	2. Run OVS: cd /opt/openvswitch; sudo ./run_ovs.sh
 	3. Create ports for OVS: cd /opt/openvswitch; sudo ./run_srv6.sh <inport network (facing endhost)> <outport network (facing CR)> <controller's IP (node1's public IP)>
 		eg, node5: sudo ./run_srv6.sh net2 nete 155.98.39.139; 
-		    node1: sudo ./run_srv6.sh net1 neta 127.0.0.1
+		    node1: sudo ./run_srv6.sh net1 neta 155.98.39.145
 	4. Show the ports of OVS by: cd /opt/openvswitch; sudo ./ovs_port_desc.sh
 	5. The OVS will try to connect to the Ryu's SDN controller at node1.
 
 C. Run Ryu SDN controller:
 --------------------------
-	0. Modify the parameters in the controller to match the information in net_info.sh.
+	0. Copy net_info.sh to /opt: sudo cp net_info.sh /opt/
 	1. cd /opt/openvswitch/sdn_controller/; ryu-manager sr_controller_test.py
 	2. The controller will install SR encapsulation rules on node1 and node5 OVSes.
 	
