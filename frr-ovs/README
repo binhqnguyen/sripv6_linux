@@ -13,8 +13,11 @@ A. How to set up basic IPv6 with OSPF? Everything is running on Node1.
 	./start_all_frr.sh
 5. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
 	ip -6 route
-6. Install default routes on the end hosts: node1 and node 5
+6. Install default routes on the end hosts: node0 and node6
 	./install_default_route_on_hosts.sh
+7. Enable SR on core routers:
+	./enable_sr_flags.sh
+
 
 B. Run OVS with SR:
 -------------------
