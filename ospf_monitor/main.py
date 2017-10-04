@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 
 import sys, select
-sys.path.insert(0, '/users/binh/ospf_monitor/lib')
+sys.path.insert(0, '/users/binh/sripv6-linux/ospf_monitor/lib')
 from ospfv3 import *
 
 if __name__ == "__main__":
@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     global VERBOSE, DUMP_MRTD, ADDRESS
 
-    VERBOSE   = 3
+    VERBOSE   = 1
     DUMP_MRTD = 0
     ADDRESS   = "::"
 
@@ -28,8 +28,9 @@ if __name__ == "__main__":
             #rfds, _, _ = select.select([ospf._sock], [], [], timeout)
 
 	    rv = ospf.parseMsg(VERBOSE, 0)
-	    if rv:
-		print rv["T"]
+	    #consume_ospf(rv)
+	    #if rv:
+	    #	print rv["T"]
             #if len(rfds) > 0:
 	    #	print "receive OSPF"
 	    #	rv = ospf.parseMsg(VERBOSE, 0)

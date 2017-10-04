@@ -1,9 +1,9 @@
-##     PyRT: Python Routeing Toolkit
+##     OSPFv3 monitor
 
 ##     mutils: various miscellaneous functions for dealing with IP
 ##     addresses, prefixes, etc.
 
-##     Copyright (C) 2001 Richard Mortier <mort@sprintlabs.com>, Sprint ATL
+##     Copyright (C) 2017 Binh Nguyen <binh@cs.utah.edu>, University of Utah
 
 ##     This program is free software; you can redistribute it and/or
 ##     modify it under the terms of the GNU General Public License as
@@ -243,7 +243,7 @@ def int2bin(int):
     ret = "" ; bit = 0
     while int != 0:
         if bit % 8 == 0: ret = '.' + ret
-        ret = `int%2` + ret
+        ret = ("%s" % (int % 2)) + ret
         int = int >> 1
         bit += 1
 
@@ -271,6 +271,10 @@ def int2hex(i):
 
 def str2ipv6(s):
     return ipaddress.IPv6Address(s)
+
+def int2ipv6(i1, i2, i3, i4):
+	s = u"%02X:%04X:%04X:%04X:%02X:%02X:%02X:%02X" % ((i1&(0XFFFF<<(8*2)))>>(8*2), i1&0XFFFF, (i2&(0XFFFF<<(8*2)))>>(8*2), i2&0XFFFF, (i3&(0XFFFF<<(8*2)))>>(8*2), i3&0XFFFF, (i4&(0XFFFF<<(8*2)))>>(8*2), i4&0XFFFF)
+	return ipaddress.IPv6Address(s)
 
 ################################################################################
 

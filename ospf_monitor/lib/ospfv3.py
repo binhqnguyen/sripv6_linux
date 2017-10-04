@@ -1,10 +1,10 @@
 #! /usr/bin/env python2.5
 
-##     PyRT: Python Routeing Toolkit
+##     OSPFv3 monitor
 
-##     OSPF module: provides the OSPF listener and OSPF PDU parsers
+##     OSPFv3 module: provides the OSPF listener and OSPF PDU parsers
 
-##     Copyright (C) 2010 Richard Mortier <mort@cantab.net>
+##     Copyright (C) 2017 Binh Nguyen <binh@cs.utah.edu> University of Utah
 
 ##     This program is free software; you can redistribute it and/or
 ##     modify it under the terms of the GNU General Public License as
@@ -22,11 +22,7 @@
 ##     02111-1307 USA
 
 # RFC 1584 -- MOSPF
-# RFC 2328 -- OSPF v2
-# RFC 2370 -- Opaque LSAs (updated by RFC 3670)
-#   [ This is such a mess compared with IS-IS!  Opaque LSAs have a
-#   different LSA header format due to the need to encode an Opaque
-#   LSA type ]
+# RFC ???? -- OSPF v3
 # RFC 2676 -- QoS routing mechanisms
 # RFC 3101 -- Not-so-stubby-area (NSSA) option
 # RFC 3137 -- Stub routers (where metric == 0xffffff > LSInfinity, 0xffff)
@@ -70,6 +66,7 @@ from mutils import *
 import logging
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.INFO)
+PARSE = [0,1,1,1,1] #[hello, dbdesc, req, update, ack]
 
 #-------------------------------------------------------------------------------
 
@@ -101,7 +98,7 @@ OSPF_HELLO     = "> L HBB L L L"
 OSPF_HELLO_LEN = struct.calcsize(OSPF_HELLO)
 
 #V3
-OSPFV3_HELLO     = "> B3s HH L L"
+OSPFV3_HELLO     = "> L B3s HH L L"
 OSPFV3_HELLO_LEN = struct.calcsize(OSPFV3_HELLO)
 
 
@@ -163,6 +160,9 @@ OSPF_LINK_LEN = struct.calcsize(OSPF_LINK)
 OSPFV3_LSALINK     = "> B3s LLLL L"
 OSPFV3_LSALINK_LEN = struct.calcsize(OSPFV3_LSALINK)
 
+#V3
+OSPFV3_LSAINTRAPREFIX = "> HH L L "
+OSPFV3_LSAINTRAPREFIX_LEN = struct.calcsize(OSPFV3_LSAINTRAPREFIX)
 
 #TODO
 OSPF_METRIC     = "> BBH"
@@ -219,16 +219,16 @@ LSA_TYPES = { 1L: "ROUTER",             # links between routers in the area
               11L: "OPAQUE AS LOCAL",
               }
 #V3
-LSAV3_TYPES = { 1L: "ROUTER",             # links between routers in the area
-              2L: "NETWORK",            # links between "networks" in the area
-              3L: "INTER AREA PREFIX",       
-              4L: "INTER AREA ROUTER",     
-              5L: "EXTERNAL AS",        
+LSAV3_TYPES = { 8193: "ROUTER",             # links between routers in the area, 0X2001
+              8194: "NETWORK",            # links between "networks" in the area, 0X2002
+              8195: "INTER AREA PREFIX",       
+              8196: "INTER AREA ROUTER",     
+              16389: "EXTERNAL AS",   #0X4005     
 
-              6L: "MOSPF",
-              7L: "NSSA",
-
-              9L: "INTRA AREA PREFIX",
+              8198: "GROUP MEMBER", #0X2006
+              8199: "NSSA",
+	      8: "LINK LSA", #0X0008
+              8201: "INTRA AREA PREFIX", #0X2009
               }
 
 DLIST += [LSA_TYPES]
@@ -337,7 +337,7 @@ def parseOspfHdr(msg, verbose=1, level=0):
 
     if verbose > 1: print prtbin(level*INDENT, msg[:OSPF_HDR_LEN])
     (ver, typ, len, rid, aid, cksum, instanceid, zero) = struct.unpack(OSPFV3_HDR, msg)
-    if verbose > 0:
+    if verbose > 1:
         print level*INDENT +\
               "OSPF: ver:%s, type:%s, len:%s, rtr id:%s, area id:%s, cksum:%x, instanceid:%s" %\
               (ver, MSG_TYPES[typ], len, id2str(rid), id2str(aid), cksum, instanceid,)
@@ -352,7 +352,7 @@ def parseOspfHdr(msg, verbose=1, level=0):
              }
 
 def parseOspfOpts(opts, verbose=1, level=0):
-    
+    if verbose > 1: print "###parseOspfOpts not implemented.###"
     return None
     #TODO
     if verbose > 1: print level*INDENT + int2bin(opts)
@@ -389,7 +389,6 @@ def parseOspfLsaHdr(hdr, verbose=1, level=0):
                   age, LSAV3_TYPES[typ], id2str(lsid), id2str(advrtr), lsseqno, cksum, length)
 
     return { "AGE"     : age,
-             "OPTS"    : opts,
              "T"       : typ,
              "LSID"    : lsid,
              "ADVRTR"  : advrtr,
@@ -409,7 +408,7 @@ def parseOspfLsaRtr(lsa, verbose=1, level=0):
         print level*INDENT + "rtr desc: %s %s %s" %(
             v*"VIRTUAL", e*"EXTERNAL", b*"BORDER")
 
-    lsa = lsa[OSPFV3_LSARTR_LEN:] ; interfaces = {}
+    lsa = lsa[OSPFV3_LSARTR_LEN:] ; interfaces = []
     while len(lsa) >= OSPFV3_LSARTR_INTERFACE_LEN:
         if verbose > 1: print prtbin((level+1)*INDENT, lsa[:OSPFV3_LSARTR_INTERFACE_LEN])
         (type, _, metric, interfaceid, nbinterfaceid, nbrouterid) = struct.unpack(OSPFV3_LSARTR_INTERFACE, lsa[:OSPFV3_LSARTR_INTERFACE_LEN])
@@ -450,7 +449,7 @@ def parseOspfLsaNet(lsa, verbose=1, level=0):
         rtrs.append(rtr)
         lsa = lsa[rt_len:]
 
-    return { "options" : opoptions,
+    return { "options" : options,
              "RTRS" : rtrs
              }
 
@@ -458,26 +457,52 @@ def parseOspfLsaLink(lsa, verbose=1, level=0):
 
     if verbose > 1: print prtbin(level*INDENT, lsa[:OSPFV3_LSALINK_LEN])
     (prio, options, lcp1, lcp2, lcp3, lcp4, nprefix) = struct.unpack(OSPFV3_LSALINK, lsa[:OSPFV3_LSALINK_LEN])
-    if verbose > 1: print (level+1)*INDENT + "link local prefix: %s:%s:%s:%s" % (lcp1,lcp2,lcp3,lcp4)
+    llprefix = int2ipv6(lcp1, lcp2, lcp3, lcp4)
+    if verbose > 0: print (level+1)*INDENT + "link local prefix: %s" % (llprefix)
 
-    lsa = lsa[OSPFV3_LSALINK_LEN:] ; cnt = 0; pr_len = struct.calcsize(">BBH LLLL") ; prefixes = []
+    lsa = lsa[OSPFV3_LSALINK_LEN:] ; cnt = 0; pr_len = struct.calcsize(">BBH LLL") ; prefixes = []
     while cnt < int(nprefix):
         if verbose > 1: print prtbin((level+1)*INDENT, lsa[:pr_len])
-        (pl, popts, _, p1, p2, p3, p4) = struct.unpack('>BBH LLLL', lsa[:rt_len])
+        (pl, popts, _, p1, p2, p3) = struct.unpack('>BBH LLL', lsa[:pr_len])
+	prefix = int2ipv6(p1, p2, p3, 0)
         if verbose > 0:
-            print (level+1)*INDENT + "prefix:%s:%s:%s:%s" % (p1,p2,p3,p4)
+            print (level+1)*INDENT + "prefix:%s" % prefix
 
-        prefixes.append([p1,p2,p3,p4])
-        lsa = lsa[pl_len:]
+        prefixes.append(prefix)
+        lsa = lsa[pr_len:]
 	cnt += 1
 
-    return { "options" : opoptions,
-             "linklocaladdress" : [lcp1, lcp2, lcp3, lcp4],
+    return { "options" : options,
+             "linklocaladdress" : llprefix,
 	     "prefixes" : prefixes
              }
 
 def parseOspfLsaIntraAreaPrefix(lsa, verbose=1, level=0):
-    print "######parseOspfLsaIntraAreaPrefix not implemented#######"
+    if verbose > 1: print prtbin(level*INDENT, lsa[:OSPFV3_LSAINTRAPREFIX_LEN])
+    (nprefixes, reflstype, reflsid, refadvrouter) = struct.unpack(OSPFV3_LSAINTRAPREFIX, lsa[:OSPFV3_LSAINTRAPREFIX_LEN])
+    if verbose > 1: print (level+1)*INDENT + "nprefixes:%s, reflstype:%s, reflsid:%s, refadvrouter:%s" % (nprefixes, reflstype, reflsid, refadvrouter)
+
+    lsa = lsa[OSPFV3_LSAINTRAPREFIX_LEN:] ; cnt = 0; pr_len = struct.calcsize(">BBH LLL") ; prefixes = []
+    while cnt < int(nprefixes):
+        if verbose > 1: print prtbin((level+1)*INDENT, lsa[:pr_len])
+        (pl, popts, _, p1, p2, p3) = struct.unpack('>BBH LLL', lsa[:pr_len])
+	prefix = int2ipv6(p1,p2,p3,0)
+        if verbose > 0:
+            print (level+1)*INDENT + "prefix:%s" % prefix
+
+        prefixes.append(prefix)
+        lsa = lsa[pr_len:]
+	cnt += 1
+
+    return { 
+	     "nprefix": nprefixes,
+	     "reflstype" : reflstype,
+	     "reflsid" : reflsid,
+	     "refadvrouter" : refadvrouter,
+	     "prefixes" : prefixes
+             }
+
+
     return None 
 
 def parseOspfLsaSummary(lsa, verbose=1, level=0):
@@ -569,13 +594,13 @@ def parseOspfLsas(lsas, verbose=1, level=0):
         rv[cnt]["T"] = t
         rv[cnt]["L"] = l
 
-        if t == LSAV3_TYPES["ROUTER"]:
+        if LSAV3_TYPES[t] == "ROUTER":
             rv[cnt]["V"] = parseOspfLsaRtr(lsas[OSPFV3_LSAHDR_LEN:l], verbose, level+1)
-        elif t == LSAV3_TYPES["NETWORK"]:
+        elif LSAV3_TYPES[t] == "NETWORK":
             rv[cnt]["V"] = parseOspfLsaNet(lsas[OSPFV3_LSAHDR_LEN:l], verbose, level+1)
-        elif t == LSAV3_TYPES["LINK LSA"]:
+        elif LSAV3_TYPES[t] == "LINK LSA":
             rv[cnt]["V"] = parseOspfLsaLink(lsas[OSPFV3_LSAHDR_LEN:l], verbose, level+1)
-        elif t == LSAV3_TYPES["INTR AREA PREFIX"]:
+        elif LSAV3_TYPES[t] == "INTRA AREA PREFIX":
             rv[cnt]["V"] = parseOspfLsaIntraAreaPrefix(lsas[OSPFV3_LSAHDR_LEN:l], verbose, level+1)
 
         else:
@@ -588,12 +613,14 @@ def parseOspfLsas(lsas, verbose=1, level=0):
 
 def parseOspfHello(msg, verbose=1, level=0):
 
-    if verbose > 1: print prtbin(level*INDENT, msg)
-    (prio, options, hellointerval, deadinterval, desig, bdesig ) = struct.unpack(OSPFV3_HELLO, msg[OSPFV3_HDR_LEN:OSPFV3_HELLO_LEN])
+    if verbose > 1: 
+	print prtbin(level*INDENT, msg)
+		
+    (interfaceid, prio, options, hellointerval, deadinterval, desig, bdesig) = struct.unpack(OSPFV3_HELLO, msg[:OSPFV3_HELLO_LEN])
     if verbose > 0:
         print level*INDENT +\
-              "HELLO: prio:%s, opts:%s, hello interval:%s, dead intvl:%s" %\
-              (prio, options, hellointerval, deadinterval)
+              "HELLO: interfaceid:%s, prio:%s, opts:%s, hello interval:%s, dead intvl:%s" %\
+              (interfaceid, prio, options, hellointerval, deadinterval)
         print (level+1)*INDENT +\
               "designated rtr:%s, backup designated rtr:%s" %\
               (id2str(desig), id2str(bdesig))
@@ -610,10 +637,12 @@ def parseOspfHello(msg, verbose=1, level=0):
         msg = msg[nbor_len:]
 
 
-    return { "PRIO"    : prio,
+    return { 
+	     "INTERFACEID" : interfaceid, 
+	     "PRIO"    : prio,
              "OPTS"    : parseOspfOpts(options, verbose, level),
              "HELLO"   : hellointerval,
-             "DEAD"    : dead,
+             "DEAD"    : deadinterval,
              "DESIG"   : desig,
              "BDESIG"  : bdesig,
              "NBORS"   : nbors
@@ -629,8 +658,8 @@ def parseOspfDesc(msg, verbose=1, level=0):
     if verbose > 0:
         print level*INDENT +\
               "DESC: mtu:%s, opts:%s, imms:%s%s%s%s, dd seqno:%s" %\
-              (mtu, int2bin(opts), init*"INIT", more*" MORE",
-               masterslave*" MASTER" + (1-masterslave)*" SLAVE",
+              (mtu, opts, init*"INIT", more*" MORE",
+               masterslave*" MASTER" ,(1-masterslave)*" SLAVE",
                ddseqno)
 
     return { "MTU"         : mtu,
@@ -678,19 +707,19 @@ def parseOspfMsg(msg, verbose=1, level=0):
            "V": ospfh,
            }
 
-    if MSG_TYPES[ospfh["TYPE"]] == "HELLO":
+    if MSG_TYPES[ospfh["TYPE"]] == "HELLO" and (PARSE[0] == 1):
         rv["V"]["V"] = parseOspfHello(msg[OSPFV3_HDR_LEN:], verbose, level+1)
 
-    elif MSG_TYPES[ospfh["TYPE"]] == "DBDESC":
+    elif MSG_TYPES[ospfh["TYPE"]] == "DBDESC" and (PARSE[1] == 1):
         rv["V"]["V"] = parseOspfDesc(msg[OSPFV3_HDR_LEN:], verbose, level+1)
 
-    elif MSG_TYPES[ospfh["TYPE"]] == "LSREQ":
+    elif MSG_TYPES[ospfh["TYPE"]] == "LSREQ" and (PARSE[2] == 1):
         rv["V"]["V"] = parseOspfLSReq(msg[OSPFV3_HDR_LEN:], verbose, level)
 
-    elif MSG_TYPES[ospfh["TYPE"]] == "LSUPD":
+    elif MSG_TYPES[ospfh["TYPE"]] == "LSUPD" and (PARSE[3] == 1):
         rv["V"]["V"] = parseOspfLsUpd(msg[OSPFV3_HDR_LEN:], verbose, level+1)
 
-    elif MSG_TYPES[ospfh["TYPE"]] == "LSACK":
+    elif MSG_TYPES[ospfh["TYPE"]] == "LSACK" and (PARSE[4] == 1):
         rv["V"]["V"] = parseOspfLsAck(msg[OSPFV3_HDR_LEN:], verbose, level+1)
 
     return rv
@@ -760,7 +789,7 @@ class Ospfv3:
     #---------------------------------------------------------------------------
 
     def parseMsg(self, verbose=1, level=0):
-
+	rv = None
         try:
             (msg_len, msg) = self.recvMsg(verbose, level)
 
@@ -775,13 +804,8 @@ class Ospfv3:
                 print "%sparseMsg: len=%d%s" %\
                       (level*INDENT, msg_len, prthex((level+1)*INDENT, msg))
 
-            try:
-                rv = parseOspfMsg(msg, verbose, level)
-            except Exception, exc:
-                stk = traceback.extract_stack(limit=1)
-                tb = stk[0]
-                error("[ *** exception parsing OSPF packet ***]\n")
-                error("### File: %s, Line: %s, Exc: %s " % (tb[0], tb[1], exc ))
+            rv = parseOspfMsg(msg, verbose, level)
+		
 
             return rv
 

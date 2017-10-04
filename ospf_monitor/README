@@ -1,0 +1,7 @@
+OSPFv3 Monitor.
+-----------------------------------------------------------------
+This program listens to OSPFv3 messages and obtain LSA information to monitor topology changes.
+
+
+-----------------------------------------------------------------
+This program is built based on the Pyrt code (https://github.com/mor1/pyrt.git), with the extra support for OSPFv3.
