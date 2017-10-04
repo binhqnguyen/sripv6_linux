@@ -1,20 +1,20 @@
 # !/usr/bin/env python
 
 import sys, select
+from lsa_receiver import *
 sys.path.insert(0, '/users/binh/sripv6-linux/ospf_monitor/lib')
 from ospfv3 import *
 
 if __name__ == "__main__":
 
-    #import mrtd
 
     global VERBOSE, DUMP_MRTD, ADDRESS
 
     VERBOSE   = 1
     DUMP_MRTD = 0
     ADDRESS   = "::"
+    lsar = LSAR("155.98.39.112", 8080)
 
-    #mrtd_type = None
 
     #---------------------------------------------------------------------------
 
@@ -25,19 +25,10 @@ if __name__ == "__main__":
 
         rv = None
         while 1:
-            #rfds, _, _ = select.select([ospf._sock], [], [], timeout)
 
 	    rv = ospf.parseMsg(VERBOSE, 0)
-	    #consume_ospf(rv)
-	    #if rv:
-	    #	print rv["T"]
-            #if len(rfds) > 0:
-	    #	print "receive OSPF"
-	    #	rv = ospf.parseMsg(VERBOSE, 0)
-            #else:
-	    #	print "receiveX"
-            #    ## tx some pkts to form adjacency
-            #    pass
+	    lsar.print_ospf_json(rv, VERBOSE, 0)
+	    lsar.send_ospf_msg(rv)
 
     except (KeyboardInterrupt):
         ospf.close()

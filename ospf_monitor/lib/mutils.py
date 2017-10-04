@@ -274,7 +274,7 @@ def str2ipv6(s):
 
 def int2ipv6(i1, i2, i3, i4):
 	s = u"%02X:%04X:%04X:%04X:%02X:%02X:%02X:%02X" % ((i1&(0XFFFF<<(8*2)))>>(8*2), i1&0XFFFF, (i2&(0XFFFF<<(8*2)))>>(8*2), i2&0XFFFF, (i3&(0XFFFF<<(8*2)))>>(8*2), i3&0XFFFF, (i4&(0XFFFF<<(8*2)))>>(8*2), i4&0XFFFF)
-	return ipaddress.IPv6Address(s)
+	return str(ipaddress.IPv6Address(s))
 
 ################################################################################
 
