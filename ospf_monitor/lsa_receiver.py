@@ -17,9 +17,9 @@ class LSAR(object):
 			print (level+1)*INDENT + json_s
 
 	def send_ospf_msg(self, ospf_msg):
-		uri = 'http://%s:%s/ospf_monitor/lsa_put' % (self.dst_ip, self.dst_port)
+		uri = 'http://%s:%s/lsa_put' % (self.dst_ip, self.dst_port)
 		try:
-			r = requests.post(uri, data=ospf_msg)
+			r = requests.post(uri, json=ospf_msg)
 			if (r.status_code != 200):
 				print "Sent OSPF message to %s,return code = %s" % (uri, r.status_code)
 		except:

@@ -482,16 +482,24 @@ def parseOspfLsaIntraAreaPrefix(lsa, verbose=1, level=0):
     (nprefixes, reflstype, reflsid, refadvrouter) = struct.unpack(OSPFV3_LSAINTRAPREFIX, lsa[:OSPFV3_LSAINTRAPREFIX_LEN])
     if verbose > 1: print (level+1)*INDENT + "nprefixes:%s, reflstype:%s, reflsid:%s, refadvrouter:%s" % (nprefixes, reflstype, reflsid, refadvrouter)
 
-    lsa = lsa[OSPFV3_LSAINTRAPREFIX_LEN:] ; cnt = 0; pr_len = struct.calcsize(">BBH LLL") ; prefixes = []
+    lsa = lsa[OSPFV3_LSAINTRAPREFIX_LEN:] ; cnt = 0; 
+    prefixes = []
     while cnt < int(nprefixes):
+    	(pr_len_bit,) = struct.unpack('>B', lsa[:struct.calcsize('>B')])
+	pr_len = pr_len_bit/8
         if verbose > 1: print prtbin((level+1)*INDENT, lsa[:pr_len])
-        (pl, popts, _, p1, p2, p3) = struct.unpack('>BBH LLL', lsa[:pr_len])
-	prefix = int2ipv6(p1,p2,p3,0)
+	prefix_cnt = pr_len/struct.calcsize('>L')
+        (pl, popts, _) = struct.unpack('>BBH', lsa[:struct.calcsize('>BBH')])
+	lsa = lsa[struct.calcsize('>BBH'):]
+	p = [0,0,0,0]
+	for i in range(0, prefix_cnt):
+		(p[i],) = struct.unpack('>L', lsa[:struct.calcsize('>L')])
+		lsa = lsa[struct.calcsize('>L'):]
+	prefix = int2ipv6(p[0], p[1], p[2], p[3])
         if verbose > 0:
             print (level+1)*INDENT + "prefix:%s" % prefix
 
         prefixes.append(prefix)
-        lsa = lsa[pr_len:]
 	cnt += 1
 
     return { 
