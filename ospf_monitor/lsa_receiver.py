@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 
 import sys, json, requests
+import subprocess
 sys.path.insert(0, '/users/binh/sripv6-linux/ospf_monitor/lib')
 from ospfv3 import *
 
@@ -18,7 +19,7 @@ class LSAR(object):
 	def send_ospf_msg(self, ospf_msg):
 		uri = 'http://%s:%s/ospf_monitor/lsa_put' % (self.dst_ip, self.dst_port)
 		try:
-			r = requests.post(uri, data=json.dumps(ospf_msg, ensure_ascii=False))
+			r = requests.post(uri, data=ospf_msg)
 			if (r.status_code != 200):
 				print "Sent OSPF message to %s,return code = %s" % (uri, r.status_code)
 		except:
