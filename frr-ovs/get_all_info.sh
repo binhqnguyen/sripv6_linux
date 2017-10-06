@@ -10,6 +10,7 @@ GET_INTERFACES_HELPER="$HOME/get_interface_map.pl"
 hn=$(hostname)
 domain=$(echo $hn | awk -F'.' '{print $2"."$3"."$4"."$5}')
 echo "Get info of node $hn ..."
+cp get_interface_map.pl $HOME/
 ./get_info.sh >> net_info.sh
 
 
