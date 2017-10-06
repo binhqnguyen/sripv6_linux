@@ -1,6 +1,6 @@
 #!/bin/bash
 LB_IP=197
-INF="./get_interface_map.pl"
+INF="$HOME/get_interface_map.pl"
 
 #NODE0
 hn=$(hostname | awk -F'.' '{print $1}')
