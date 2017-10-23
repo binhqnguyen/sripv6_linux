@@ -5,8 +5,8 @@ ETC="/usr/local/etc/"
 
 META="hostname Router\n
 password zebra\n
-enable password zebra\n"
-#log file zebra.log\n!"
+enable password zebra\n
+log file /users/quagga/zebra.log\n!"
 #LB="interface lo\n
 LB="ip forwarding\n
 line vty"

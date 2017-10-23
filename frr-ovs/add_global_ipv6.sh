@@ -20,7 +20,7 @@ $SSH_SD "node0.$DOMAIN" "sudo ip -6 addr add $n0_1 dev $n0_1_dev"
 echo "Add IPv6 addresses on node 2"
 #$SSH_SD "node2.$DOMAIN" "sudo ip -6 addr add $n2_a dev $n2_a_dev"
 #$SSH_SD "node2.$DOMAIN" "sudo ip -6 addr add $n2_b dev $n2_b_dev"
-#$SSH_SD "node2.$DOMAIN" "sudo ip -6 addr add $n2_c dev $n2_c_dev"
+$SSH_SD "node2.$DOMAIN" "sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga; sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga  quagga"
 $SSH_SD "node2.$DOMAIN" "sudo ip -6 addr add $n2_lb dev lo"
 
 
@@ -29,12 +29,14 @@ echo "Add IPv6 addresses on node 3"
 #$SSH_SD "node3.$DOMAIN" "sudo ip -6 addr add $n3_b dev $n3_b_dev"
 #$SSH_SD "node3.$DOMAIN" "sudo ip -6 addr add $n3_d dev $n3_d_dev"
 #$SSH_SD "node3.$DOMAIN" "sudo ip -6 addr add $n3_e dev $n3_e_dev"
+$SSH_SD "node3.$DOMAIN" "sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga; sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga  quagga"
 $SSH_SD "node3.$DOMAIN" "sudo ip -6 addr add $n3_lb dev lo"
 
 #----------node4---------
 echo "Add IPv6 addresses on node 4"
 #$SSH_SD "node4.$DOMAIN" "sudo ip -6 addr add $n4_d dev $n4_d_dev"
 #$SSH_SD "node4.$DOMAIN" "sudo ip -6 addr add $n4_c dev $n4_c_dev"
+$SSH_SD "node4.$DOMAIN" "sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga; sudo adduser --home /users/quagga --disabled-password --gecos \"\" quagga  quagga"
 $SSH_SD "node4.$DOMAIN" "sudo ip -6 addr add $n4_lb dev lo"
 
 #----------node5---------
