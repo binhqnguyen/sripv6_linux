@@ -4,7 +4,7 @@ OSPF="ospf6d.conf"
 ETC="/usr/local/etc/"
 
 
-META="hostname ospf6d@plant\npassword zebra\nlog file ospf6.log\nservice advanced-vty\n!"
+META="hostname ospf6d@plant\npassword zebra\nservice advanced-vty\n!"
 echo "!" > $OSPF
 echo -e $META >> $OSPF
 
