@@ -14,8 +14,8 @@ if __name__ == "__main__":
     DUMP_MRTD = 0
     ADDRESS   = "::"
 
-    LSAA_HOST = "155.98.39.112"
-    LSAA_PORT = 5002
+    LSAA_HOST = "node1.srv6.phantomnet.emulab.net"
+    LSAA_PORT = 8080
     #lsar = LSAR("155.98.39.112", 8080)
     lsar = LSAR(LSAA_HOST, LSAA_PORT)
 
@@ -31,9 +31,9 @@ if __name__ == "__main__":
         while 1:
 
 	    rv = ospf.parseMsg(VERBOSE, 0)
-	    if MSG_TYPES[int(rv['T'])] == "LSUPD": 
-	    	lsar.print_ospf_json(rv, VERBOSE, 0)
-	    	lsar.send_ospf_msg(rv)
+	    if MSG_TYPES[int(rv['T'])] == "LSUPD" or MSG_TYPES[int(rv['T'])] == "HELLO":
+		lsar.print_ospf_json(rv, VERBOSE, 0)
+		lsar.send_ospf_msg(rv)
 
     except (KeyboardInterrupt):
         ospf.close()

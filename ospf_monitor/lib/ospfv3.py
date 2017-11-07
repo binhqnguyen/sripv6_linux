@@ -66,7 +66,7 @@ from mutils import *
 import logging
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.INFO)
-PARSE = [0,1,1,1,1] #[hello, dbdesc, req, update, ack]
+PARSE = [1,1,1,1,1] #[hello, dbdesc, req, update, ack]
 
 #-------------------------------------------------------------------------------
 
