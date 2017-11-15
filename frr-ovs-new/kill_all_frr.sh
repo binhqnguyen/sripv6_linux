@@ -2,7 +2,7 @@
 
 hn=$(hostname)
 domain=$(echo $hn | awk -F'.' '{print $2"."$3"."$4"."$5}')
-for i in  2 3 4 
+for i in  2 3 4 7
 do
 	echo -e "\n========================="
 	echo "Kill FRR on node $i ..."

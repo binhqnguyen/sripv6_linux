@@ -46,6 +46,7 @@ $SSH_SD node3.$DOMAIN "sudo sysctl net.ipv6.conf.all.seg6_enabled=1"
 $SSH_SD node3.$DOMAIN "sudo sysctl net.ipv6.conf.$n3_b_dev.seg6_enabled=1"
 $SSH_SD node3.$DOMAIN "sudo sysctl net.ipv6.conf.$n3_d_dev.seg6_enabled=1"
 $SSH_SD node3.$DOMAIN "sudo sysctl net.ipv6.conf.$n3_e_dev.seg6_enabled=1"
+$SSH_SD node3.$DOMAIN "sudo sysctl net.ipv6.conf.$n3_g_dev.seg6_enabled=1"
 
 
 
@@ -61,6 +62,7 @@ $SSH_SD node4.$DOMAIN "sudo sysctl net.ipv6.conf.all.seg6_enabled=1"
 #enable SRH processing flag on interface
 $SSH_SD node4.$DOMAIN "sudo sysctl net.ipv6.conf.$n4_c_dev.seg6_enabled=1"
 $SSH_SD node4.$DOMAIN "sudo sysctl net.ipv6.conf.$n4_d_dev.seg6_enabled=1"
+$SSH_SD node4.$DOMAIN "sudo sysctl net.ipv6.conf.$n4_f_dev.seg6_enabled=1"
 
 
 #--------node7--------------
