@@ -16,7 +16,7 @@ if [ "$hn" == "node5" ]; then
 	echo "Start OVS on Node $hn..."
 	cd /opt/openvswitch; sudo ./re_compile.sh
 	cd /opt/openvswitch; sudo ./run_ovs.sh
-	sudo ./run_srv6.sh net2 neta $(host node1.$domain | grep "has address" | awk -F" " '{print $4}')
+	sudo ./run_srv6.sh net2 nete $(host node1.$domain | grep "has address" | awk -F" " '{print $4}')
 fi
 
 exit 0

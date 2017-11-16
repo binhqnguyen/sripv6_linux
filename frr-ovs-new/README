@@ -1,9 +1,16 @@
 Scripts to run Free Range Routing's OSPF on profile sripv6-ovs in PhantomNet (https://www.cloudlab.us/show-profile.php?uuid=616d4cca-7df2-11e7-91c5-90e2ba22fee4)
 ------------------------------------------------------------------------------------
 
+NOTE: run all of the following scripts on node 1 of your experiment.
 
-A. How to set up basic IPv6 with OSPF? Everything is running on Node1.
----------------------------------------------------------------------
+Fetching code:
+--------------
+1. Fetch scripts: https://gitlab.flux.utah.edu/binh/sripv6-linux
+2. Fetch OVS code: https://gitlab.flux.utah.edu/binh/ovs-srv6
+	+ Node 1: Copy the sdn code to /opt/openvswitch: sudo cp -r ~/ovs-srv6/sdn_controller /opt/openvswitch/
+
+A. Configure nodes and OSPF:
+---------------------------
 1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh. Copy net_info.sh to /opt/ folder.
 2. Add global IPv6 addresses to interfaces: ./add_global_ipv6.sh
 3. Create and install configuration files for FRR's Zebra and OSPF6. The configuration is copied to /usr/local/etc/ on each node after running the command:
@@ -33,7 +40,7 @@ C. Start OSPF and OSPF monitors:
 	1. Start OSPF monitors:
 		cd ~/sripv6-linux/ospf_monitor; ./start_all_ospf_monitor.sh
 	2. Run FRR deamons on node 2, 3, 4:
-		./start_all_frr.sh
+		cd sripv6/frr-ovs-new/; ./start_all_frr.sh
 	3. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
 		ip -6 route
 
@@ -57,7 +64,7 @@ E. Run and access the web portal:
 		sudo apt-get update; sudo apt-get install -y apache2
 	1. Copy web portal code to /var/www folder:
 		sudo cp -r sripv6-linux/www /var/
-	2. Modify the hostname in the "url" variable in www/netjsongraph.js/examples/te_app.js so that it points to node1 of your experiment.
+	2. Modify the hostname in the "url" variable in /var/www/netjsongraph.js/examples/te_app.js so that it points to node1 of your experiment.
 	3. Access the web portal using this url:
 		http://<node1 name>/netjsongraph.js/examples/
 	4. The web portal should show a topology of your OSPF routers. You can also implement a path using the portal.
