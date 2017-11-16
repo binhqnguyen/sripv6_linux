@@ -14,7 +14,8 @@
 
 source net_info.sh
 
-SSH_SD="ssh -t -t"
+SSH_ARGS=" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "
+SSH_SD="ssh -t -t $SSH_ARGS"
 
 
 #Node name for SSH

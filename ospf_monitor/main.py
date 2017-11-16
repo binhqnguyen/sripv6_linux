@@ -2,8 +2,7 @@
 
 import sys, select
 from lsa_receiver import *
-sys.path.insert(0, '/users/binh/sripv6-linux/ospf_monitor/lib')
-from ospfv3 import *
+from lib.ospfv3 import *
 
 if __name__ == "__main__":
 
@@ -14,8 +13,12 @@ if __name__ == "__main__":
     DUMP_MRTD = 0
     ADDRESS   = "::"
 
-    LSAA_HOST = "node1.srv6.phantomnet.emulab.net"
-    LSAA_PORT = 8080
+    if len(sys.argv) != 3:
+	print "Usage: <OSPF listener's host, eg, node1.srv6.phantomnet.emulab.net> <OSPF listener's port number, eg, 8080>"
+	sys.exit(1)
+
+    LSAA_HOST = sys.argv[1]
+    LSAA_PORT = int(sys.argv[2])
     #lsar = LSAR("155.98.39.112", 8080)
     lsar = LSAR(LSAA_HOST, LSAA_PORT)
 

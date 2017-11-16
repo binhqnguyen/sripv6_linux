@@ -2,8 +2,7 @@
 
 import sys, json, requests
 import subprocess
-sys.path.insert(0, '/users/binh/sripv6-linux/ospf_monitor/lib')
-from ospfv3 import *
+from lib.ospfv3 import *
 
 class LSAR(object):
 	

@@ -4,15 +4,11 @@ Scripts to run Free Range Routing's OSPF on profile sripv6-ovs in PhantomNet (ht
 
 A. How to set up basic IPv6 with OSPF? Everything is running on Node1.
 ---------------------------------------------------------------------
-1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh
+1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh. Copy net_info.sh to /opt/ folder.
 2. Add global IPv6 addresses to interfaces: ./add_global_ipv6.sh
 3. Create and install configuration files for FRR's Zebra and OSPF6. The configuration is copied to /usr/local/etc/ on each node after running the command:
 	./create_all_zebra_conf.sh
 	./create_all_ospf_conf.sh
-4. Run FRR on node 2, 3, 4:
-	./start_all_frr.sh
-5. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
-	ip -6 route
 6. Install default routes on the end hosts: node0 and node6
 	./install_default_route_on_hosts.sh
 7. Enable SR on core routers:
@@ -21,6 +17,9 @@ A. How to set up basic IPv6 with OSPF? Everything is running on Node1.
 
 B. Run OVS with SR:
 -------------------
+   + Automatically:
+	1. ./start_all_ovs.sh
+   + Manually:
 	1. Install ovs's kernel module: cd /opt/openvswitch; sudo ./re_compile.sh
 	2. Run OVS: cd /opt/openvswitch; sudo ./run_ovs.sh
 	3. Create ports for OVS: cd /opt/openvswitch; sudo ./run_srv6.sh <inport network (facing endhost)> <outport network (facing CR)> <controller's IP (node1's public IP)>
@@ -29,16 +28,45 @@ B. Run OVS with SR:
 	4. Show the ports of OVS by: cd /opt/openvswitch; sudo ./ovs_port_desc.sh
 	5. The OVS will try to connect to the Ryu's SDN controller at node1.
 
+C. Start OSPF and OSPF monitors:
+-------------------------------
+	1. Start OSPF monitors:
+		cd ~/sripv6-linux/ospf_monitor; ./start_all_ospf_monitor.sh
+	2. Run FRR deamons on node 2, 3, 4:
+		./start_all_frr.sh
+	3. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
+		ip -6 route
+
 C. Run Ryu SDN controller:
 --------------------------
-	0. Copy net_info.sh to /opt: sudo cp net_info.sh /opt/
-	1. cd /opt/openvswitch/sdn_controller/; ryu-manager sr_controller_test.py
-	2. The controller will install SR encapsulation rules on node1 and node5 OVSes.
+	1. Copy net_info.sh to /opt: sudo cp net_info.sh /opt/
+	2. IT IS NEEDED that the SDN controller runs *after* the OSPF deamons in step C2. Thus, to run the SDN controller:
+		+ Kill OSPF deamons: cd ~/sripv6-linux/frr-ovs-new; ./kill_all_frr.sh
+		+ Start SDN controller: cd /opt/openvswitch/sdn_controller/; ryu-manager sr_controller_test.py
+		+ Start OSPF deamons: cd ~/sripv6-linux/frr-ovs-new; ./start_all_frr.sh
+	3. The OSPF monitors will send OSPF LSAs to the SDN controller. The SDN controller will print out the OSPF routers topology that it generates from the LSAs. The controller also hsow REST-API requests that it received, eg, install a segment path.
 	
 D. Test connectivity:
 --------------------
 	After the controller installs the rules, node0 should be able to ping node6's net2
 		ping6 <node6's net2 IP>
+
+E. Run and access the web portal:
+--------------------------------
+	0. Install Apache web server: 
+		sudo apt-get update; sudo apt-get install -y apache2
+	1. Copy web portal code to /var/www folder:
+		sudo cp -r sripv6-linux/www /var/
+	2. Modify the hostname in the "url" variable in www/netjsongraph.js/examples/te_app.js so that it points to node1 of your experiment.
+	3. Access the web portal using this url:
+		http://<node1 name>/netjsongraph.js/examples/
+	4. The web portal should show a topology of your OSPF routers. You can also implement a path using the portal.
+	5. PING test:
+		+ From node 0, ping node 6:
+			ping6 <node6's net2 IP address>
+			By default, there is a shortest path between node 0 and 6, implemented by OSPF. So the PING packets should go through this path.
+		+ In the web portal, enter your desired path from node 2 (the router with the subnet that node 0 is in) to node 3 (the router with the subnet that node 6 is in), then click 'submit'. You'll see the PING packets going through a new path.
+
 
 Other scripts:
 --------------
