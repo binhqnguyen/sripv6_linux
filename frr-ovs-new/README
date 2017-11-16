@@ -58,17 +58,17 @@ D. Test connectivity:
 	After the controller installs the rules, node0 should be able to ping node6's net2
 		ping6 <node6's net2 IP>
 
-E. Run and access the web portal:
---------------------------------
+E. Run and access the Segment Routing web portal:
+------------------------------------------------
 	0. Install Apache web server: 
 		sudo apt-get update; sudo apt-get install -y apache2
-	1. Copy web portal code to /var/www folder:
-		sudo cp -r sripv6-linux/www /var/
-	2. Modify the hostname in the "url" variable in /var/www/netjsongraph.js/examples/te_app.js so that it points to node1 of your experiment.
-	3. Access the web portal using this url:
-		http://<node1 name>/netjsongraph.js/examples/
-	4. The web portal should show a topology of your OSPF routers. You can also implement a path using the portal.
-	5. PING test:
+	1. Copy web portal code to /var/www folder: (see also https://gitlab.flux.utah.edu/binh/ovs-srv6)
+		+ Replace SDN controller name: cd ~/ovs-srv6/sdn_controller/www/; ./replace_sdn_controller_name.sh <node1 name>
+		+ Copy the folder ~/ovs-srv6/sdn_controller/www to /var/: sudo cp -r ~/ovs-srv6/sdn_controller/www /var/
+	2. Access the web portal using this url:
+		http://<node1 name>/web-portal/
+	3. The web portal should show a topology of your OSPF routers. You can also implement a path using the portal.
+	4. PING test:
 		+ From node 0, ping node 6:
 			ping6 <node6's net2 IP address>
 			By default, there is a shortest path between node 0 and 6, implemented by OSPF. So the PING packets should go through this path.
