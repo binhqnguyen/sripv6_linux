@@ -1,12 +1,12 @@
-Scripts to run Free Range Routing's OSPF on profile sripv6-ovs in PhantomNet (https://www.cloudlab.us/show-profile.php?uuid=616d4cca-7df2-11e7-91c5-90e2ba22fee4)
+Scripts to run Free Range Routing's OSPF on profile sripv6-ovs in PhantomNet (https://www.emulab.net/portal/manage_profile.php?action=edit&uuid=f0d0e9d8-cbe1-11e7-b179-90e2ba22fee4)
 ------------------------------------------------------------------------------------
 
-NOTE: run all of the following scripts on node 1 of your experiment.
+***NOTE: run all of the following scripts on node 1 of your experiment***
 
 Fetching code:
 --------------
-1. Fetch scripts: https://gitlab.flux.utah.edu/binh/sripv6-linux
-2. Fetch OVS code: https://gitlab.flux.utah.edu/binh/ovs-srv6
+1. Fetch scripts: git@gitlab.flux.utah.edu:safeedge/sripv6-linux.git
+2. Fetch OVS code: git@gitlab.flux.utah.edu:safeedge/ovs-srv6.git
 	+ Node 1: Copy the sdn code to /opt/openvswitch: sudo cp -r ~/ovs-srv6/sdn_controller /opt/openvswitch/
 
 A. Infrastructure - Configure nodes and OSPF routers:
@@ -73,7 +73,7 @@ F. Run and access the Segment Routing web portal:
 ------------------------------------------------
 	0. Install Apache web server: 
 		sudo apt-get update; sudo apt-get install -y apache2
-	1. Copy web portal code to /var/www folder: (see also https://gitlab.flux.utah.edu/binh/ovs-srv6)
+	1. Copy web portal code to /var/www folder: (see also git@gitlab.flux.utah.edu:safeedge/ovs-srv6.git)
 		+ Replace SDN controller name: cd ~/ovs-srv6/sdn_controller/www/; ./replace_sdn_controller_name.sh <node1 name>
 		+ Copy the folder ~/ovs-srv6/sdn_controller/www to /var/: sudo cp -r ~/ovs-srv6/sdn_controller/www /var/
 	2. Access the web portal using this url:
@@ -87,8 +87,8 @@ F. Run and access the Segment Routing web portal:
 		+ In the web portal, enter your desired path from node 2 (the router with the subnet that node 0 is in) to node 3 (the router with the subnet that node 6 is in), then click 'submit'. You'll see the PING packets going through a new path.
 
 
-Other scripts:
---------------
+Other scripts (optional):
+------------------------
 1. kill_frr.sh: kill zebra and ospf deamons on a OSPF router.
 2. start_frr.sh: start zebra and ospf deamons on a OSPF router.
 3. zebra/ospf.log: log files of zebra and ospf.
