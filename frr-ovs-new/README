@@ -9,10 +9,10 @@ Fetching code:
 2. Fetch OVS code: https://gitlab.flux.utah.edu/binh/ovs-srv6
 	+ Node 1: Copy the sdn code to /opt/openvswitch: sudo cp -r ~/ovs-srv6/sdn_controller /opt/openvswitch/
 
-A. Configure nodes and OSPF:
----------------------------
-1. Obtain interfaces information by: ./get_all_info.sh. Result is in net_info.sh. Copy net_info.sh to /opt/ folder.
-2. Add global IPv6 addresses to interfaces: ./add_global_ipv6.sh
+A. Infrastructure - Configure nodes and OSPF routers:
+-----------------------------------
+1. Obtain interfaces information by: cd ~/sripv6-linux/frr-ovs-new; ./get_all_info.sh. Result is in net_info.sh. Copy net_info.sh to /opt/ folder.
+2. Add global IPv6 addresses to interfaces: cd ~/sripv6-linux/frr-ovs-new; ./add_global_ipv6.sh
 3. Create and install configuration files for FRR's Zebra and OSPF6. The configuration is copied to /usr/local/etc/ on each node after running the command:
 	./create_all_zebra_conf.sh
 	./create_all_ospf_conf.sh
@@ -35,30 +35,41 @@ B. Run OVS with SR:
 	4. Show the ports of OVS by: cd /opt/openvswitch; sudo ./ovs_port_desc.sh
 	5. The OVS will try to connect to the Ryu's SDN controller at node1.
 
-C. Start OSPF and OSPF monitors:
+C. Start OSPF monitors:
 -------------------------------
 	1. Start OSPF monitors:
 		cd ~/sripv6-linux/ospf_monitor; ./start_all_ospf_monitor.sh
-	2. Run FRR deamons on node 2, 3, 4:
-		cd sripv6/frr-ovs-new/; ./start_all_frr.sh
-	3. After several seconds, the routes are populated by OSPF. Check routes on node 2,3,4 using:
-		ip -6 route
 
-C. Run Ryu SDN controller:
---------------------------
+D. Start Ryu SDN controller and OSPF routers:
+--------------------------------------------
 	1. Copy net_info.sh to /opt: sudo cp net_info.sh /opt/
 	2. IT IS NEEDED that the SDN controller runs *after* the OSPF deamons in step C2. Thus, to run the SDN controller:
-		+ Kill OSPF deamons: cd ~/sripv6-linux/frr-ovs-new; ./kill_all_frr.sh
+		+ Kill OSPF deamons (if they are running): cd ~/sripv6-linux/frr-ovs-new; ./kill_all_frr.sh
 		+ Start SDN controller: cd /opt/openvswitch/sdn_controller/; ryu-manager sr_controller_test.py
+            You should see the SDN controller prints something like this *before* moving on: 
+                "
+                Deleting all flow entries in table 0 of OVS 127.0.0.1
+                Pushing bridging flows for all other IPV6 packets on OVS: 127.0.0.1
+                New OVS connected: 2, still waiting for 1 OVS to join ...
+                Deleting all flow entries in table 0 of OVS 155.98.39.75
+                Pushing bridging flows for all other IPV6 packets on OVS: 155.98.39.75
+                New OVS connected: 3, still waiting for 0 OVS to join ...
+                Init SR_rest_api
+                Datapath objects:
+                {2: <ryu.controller.controller.Datapath object at 0x2cf4a50>, 3: <ryu.controller.controller.Datapath object at 0x2cfd550>}
+                Northbound REST started!
+                "
 		+ Start OSPF deamons: cd ~/sripv6-linux/frr-ovs-new; ./start_all_frr.sh
+	        After several seconds, the routes are computed by OSPF routers. You could see the routes on node 2,3,4 by logging in a node and using:
+		            ip -6 route
 	3. The OSPF monitors will send OSPF LSAs to the SDN controller. The SDN controller will print out the OSPF routers topology that it generates from the LSAs. The controller also hsow REST-API requests that it received, eg, install a segment path.
 	
-D. Test connectivity:
+E. Test connectivity:
 --------------------
 	After the controller installs the rules, node0 should be able to ping node6's net2
 		ping6 <node6's net2 IP>
 
-E. Run and access the Segment Routing web portal:
+F. Run and access the Segment Routing web portal:
 ------------------------------------------------
 	0. Install Apache web server: 
 		sudo apt-get update; sudo apt-get install -y apache2
@@ -68,6 +79,7 @@ E. Run and access the Segment Routing web portal:
 	2. Access the web portal using this url:
 		http://<node1 name>/web-portal/
 	3. The web portal should show a topology of your OSPF routers. You can also implement a path using the portal.
+    4. If you click on a node, you'll see the network information that the web portal fetches from the SDN controller.
 	4. PING test:
 		+ From node 0, ping node 6:
 			ping6 <node6's net2 IP address>
